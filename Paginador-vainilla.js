@@ -131,12 +131,13 @@ class Paginador {
         this.paginaActual = pagina;
     }
 
-    resaltarPagina(id){
+    resaltarPagina(id,pagina){
         let botones = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
         for (let i = 0; i < botones.length; i++) {
             botones[i]?.classList?.remove("active");
         }
         document.getElementById(id).classList.add("active");
+        this.paginaActual=pagina;
     }
     
     crearPaginacion() {
@@ -176,19 +177,19 @@ class Paginador {
                 return () => {
                     if(this.hide && this.filas){
                         this.mostrarPaginaTableHide(i);
-                        this.resaltarPagina(a.id);
+                        this.resaltarPagina(a.id,i);
                     }
                     else if(!this.hide && this.filas){
                         this.mostrarPaginaTableNoHide(i);
-                        this.resaltarPagina(a.id);
+                        this.resaltarPagina(a.id,i);
                     }
                     else if(this.hide && this.data){
                         this.mostrarPaginaDataHide(i);
-                        this.resaltarPagina(a.id);
+                        this.resaltarPagina(a.id,i);
                     }
                     else if(!this.hide && this.data){
                         this.mostrarPaginaDataNoHide(i);
-                        this.resaltarPagina(a.id);
+                        this.resaltarPagina(a.id,i);
                     }
                     else{
                         alert("Error not found Data OR Body");
