@@ -158,8 +158,8 @@ class Paginador {
         pagination.className = "pagination";
         pagination.style.marginTop = "10px"; // Opcional: añadir espacio entre la tabla y la paginación
 
-        let inicioPagina = (this.grupoActual - 1) * this.paginasPorGrupo + 1;
-        let finPagina = Math.min(this.grupoActual * this.paginasPorGrupo, this.totalPaginas);
+        let inicioPagina = this.grupoActual; //* this.paginasPorGrupo + 1;
+        let finPagina = Math.min(this.grupoActual + (this.paginasPorGrupo-1), this.totalPaginas);
 
         for (let i = inicioPagina; i <= finPagina; i++) {
             let a = document.createElement("a");
@@ -252,7 +252,7 @@ class Paginador {
             this.mostrarPaginaDataNoHide(this.paginaActual);
         }
         else{
-            alert("Error not found Data OR Body");
+            alert("Error not found Data OR Table Body");
         }
 
     }
