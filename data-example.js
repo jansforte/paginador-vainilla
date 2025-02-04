@@ -9,7 +9,7 @@ const data = {
         {
             column:[
                 {value:"Jeison"},
-                {value:"28"}
+                {value:"<input type='date' class='form-control'>"}
             ]
         },
         {

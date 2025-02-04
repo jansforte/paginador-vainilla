@@ -159,7 +159,7 @@ class Paginador {
 
         // Crear los controles de página anterior
         const botonAnterior = document.createElement("div");
-        botonAnterior.className = "page-item page-link";
+        botonAnterior.className = "page-link";
         botonAnterior.onclick = () => this.cambiarGrupoPaginas(-1);
         botonAnterior.style.borderRadius = "20px 0px 0px 20px";
         botonAnterior.style.cursor = "pointer";
