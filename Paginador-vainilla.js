@@ -84,8 +84,6 @@ class Paginador {
 
     mostrarPaginaTableNoHide(pagina) {
         let informacion = this.almacenTable.get("data");
-        this.resaltarBoton(pagina);
-
         this.paginaActual = pagina;
         
         this.tablaBodyId.innerHTML = '';
@@ -108,14 +106,10 @@ class Paginador {
             this.filas[i].style.display = "";
         }
 
-        // Resaltar el botón de la página actual
-        this.resaltarBoton(pagina);
-
         this.paginaActual = pagina;
     }
 
     mostrarPaginaDataNoHide(pagina){
-        this.resaltarBoton(pagina);
         this.paginaActual = pagina;
         this.agregarDataNoHide();
     }
@@ -134,50 +128,67 @@ class Paginador {
         for (let i = inicio; i < fin && i < this.data.child.length; i++) {
             document.getElementById(`${idTr}${i}`).style.display = "";
         }
-        this.resaltarBoton(pagina);
         this.paginaActual = pagina;
     }
 
-    resaltarBoton(pagina){
-        // Resaltar el botón de la página actual
+    resaltarPagina(id){
         let botones = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
         for (let i = 0; i < botones.length; i++) {
             botones[i]?.classList?.remove("active");
         }
-        botones[pagina - this.grupoActual * this.paginasPorGrupo + this.paginasPorGrupo - 1]?.classList?.add("active");
+        document.getElementById(id).classList.add("active");
     }
     
     crearPaginacion() {
         //Validamos si existe paginador y sus controles y eliminamos
         document.getElementById(`pagination-${this.nameTableBodyId}`)?.remove();
-        document.getElementById(`page-controls-${this.nameTableBodyId}`)?.remove();
+        //document.getElementById(`page-controls-${this.nameTableBodyId}`)?.remove();
 
         // Crear el contenedor para los botones de paginación
         const pagination = document.createElement("div");
         pagination.id = `pagination-${this.nameTableBodyId}`;
-        pagination.className = "pagination";
+        pagination.className = "pagination justify-content-center";
         pagination.style.marginTop = "10px"; // Opcional: añadir espacio entre la tabla y la paginación
 
-        let inicioPagina = this.grupoActual; //* this.paginasPorGrupo + 1;
+        let inicioPagina =  this.grupoActual; 
+        if((this.grupoActual + (this.paginasPorGrupo-1))>=this.totalPaginas){
+            inicioPagina = (this.totalPaginas-this.paginasPorGrupo+1)<1 ? 1 : (this.totalPaginas-this.paginasPorGrupo+1);
+        }
         let finPagina = Math.min(this.grupoActual + (this.paginasPorGrupo-1), this.totalPaginas);
+
+        // Crear los controles de página anterior
+        const botonAnterior = document.createElement("div");
+        botonAnterior.className = "page-item page-link";
+        botonAnterior.onclick = () => this.cambiarGrupoPaginas(-1);
+        botonAnterior.style.borderRadius = "20px 0px 0px 20px";
+        botonAnterior.style.cursor = "pointer";
+        botonAnterior.style.userSelect = "none";
+        botonAnterior.innerHTML = "&laquo; Anterior";
+        pagination.appendChild(botonAnterior);
 
         for (let i = inicioPagina; i <= finPagina; i++) {
             let a = document.createElement("a");
             a.innerHTML = i;
+            a.className = "page-item page-link";
+            a.id = `page-item-${this.nameTableBodyId}-${i}`;
             a.href = "javascript:void(0)";
             a.onclick = (() => {
                 return () => {
                     if(this.hide && this.filas){
                         this.mostrarPaginaTableHide(i);
+                        this.resaltarPagina(a.id);
                     }
                     else if(!this.hide && this.filas){
                         this.mostrarPaginaTableNoHide(i);
+                        this.resaltarPagina(a.id);
                     }
                     else if(this.hide && this.data){
                         this.mostrarPaginaDataHide(i);
+                        this.resaltarPagina(a.id);
                     }
                     else if(!this.hide && this.data){
                         this.mostrarPaginaDataNoHide(i);
+                        this.resaltarPagina(a.id);
                     }
                     else{
                         alert("Error not found Data OR Body");
@@ -185,26 +196,20 @@ class Paginador {
                 };
             })();
             pagination.appendChild(a);
+            if(this.paginaActual==i){
+                a.classList?.add("active");
+            }
         }
 
-        // Crear los controles de página (anterior y siguiente)
-        const controls = document.createElement("div");
-        controls.className = "page-controls";
-        controls.id = `page-controls-${this.nameTableBodyId}`;
-
-        const botonAnterior = document.createElement("a");
-        botonAnterior.className = "postfix small button expand";
-        botonAnterior.onclick = () => this.cambiarGrupoPaginas(-1);
-        botonAnterior.style.borderRadius = "20px";
-        botonAnterior.innerHTML = "&laquo; Anterior";
-        controls.appendChild(botonAnterior);
-
-        const botonSiguiente = document.createElement("a");
-        botonSiguiente.className = "postfix small button expand";
+        // Crear los controles de página siguiente
+        const botonSiguiente = document.createElement("div");
+        botonSiguiente.className = "page-link";
         botonSiguiente.onclick = () => this.cambiarGrupoPaginas(1);
-        botonSiguiente.style.borderRadius = "20px";
+        botonSiguiente.style.borderRadius = "0px 20px 20px 0px";
+        botonSiguiente.style.cursor = "pointer";
+        botonSiguiente.style.userSelect = "none";
         botonSiguiente.innerHTML = "Siguiente &raquo;";
-        controls.appendChild(botonSiguiente);
+        pagination.appendChild(botonSiguiente);
 
         if(this.lugarPaginador){
             this.lugarPaginador.innerHTML='';
@@ -213,8 +218,24 @@ class Paginador {
         }
         else{
             // Insertar la paginación justo después de la tabla
-            this.tablaBodyId.parentNode.insertBefore(pagination, this.tablaBodyId.nextSibling);
-            this.tablaBodyId.parentNode.insertBefore(controls, this.tablaBodyId.nextSibling);
+            console.log(this.tablaBodyId.parentNode);
+           // this.tablaBodyId.parentNode.insertBefore(pagination, this.tablaBodyId.nextSibling);
+            this.tablaBodyId.parentNode.insertAdjacentElement("afterend",pagination);
+        }
+
+        if (this.paginaActual == 1) {
+            botonAnterior.classList?.add("disabled");
+            botonAnterior.style.cursor = "";
+        }
+        else if(this.paginaActual == this.totalPaginas){
+            botonSiguiente.classList?.add("disabled");
+            botonSiguiente.style.cursor = "";
+        }
+        else{
+            botonAnterior.classList?.remove("disabled");
+            botonAnterior.style.cursor = "pointer";
+            botonSiguiente.classList?.remove("disabled");
+            botonSiguiente.style.cursor = "pointer";
         }
     }
 

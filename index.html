@@ -1,71 +1,84 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Page Title</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src='./Paginador-vainilla.js'></script>
     <script src='./data-example.js'></script>
 </head>
+
 <body>
     <div>
-    <table id="tabla-principal-no-hide">
-        <thead>
+        <table class="table" id="tabla-principal-no-hide">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="2">WITH DATA AND COLUMNS NO HIDE</th>
+                </tr>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>EDAD</th>
+                </tr>
+            </thead>
+            <tbody id="bodyNamesDataNoHide">
+
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <br>
+    <table class="table" id="tabla-principal-hide">
+        <thead class="table-dark">
+            <tr>
+                <th colspan="2">WITH DATA AND COLUMNS HIDE</th>
+            </tr>
             <tr>
                 <th>NOMBRE</th>
                 <th>EDAD</th>
             </tr>
         </thead>
-        <tbody id="bodyNamesDataNoHide">
+        <tbody id="bodyNamesDataHide">
 
         </tbody>
     </table>
     </div>
     <br>
     <br>
-        <table id="tabla-principal-hide">
-            <thead>
-                <tr>
-                    <th>NOMBRE</th>
-                    <th>EDAD</th>
-                </tr>
-            </thead>
-            <tbody id="bodyNamesDataHide">
-
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <br>
     <div>
-        <table id="tabla-segundo-no-hide">
-            <thead>
+        <table class="table" id="tabla-segundo-no-hide">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="2">WITH NODE TD AND COLUMNS NO HIDE</th>
+                </tr>
                 <tr>
                     <th>NOMBRE</th>
                     <th>EDAD</th>
                 </tr>
             </thead>
             <tbody id="bodyNamesTablaNoHide">
-                <tr id="undefined0">
+                <tr>
                     <td id="column-0-0">Johan</td>
                     <td id="column-0-1">27</td>
                 </tr>
-                <tr id="undefined1">
+                <tr>
                     <td id="column-1-0">Jeison</td>
                     <td id="column-1-1">28</td>
                 </tr>
-                <tr id="undefined2">
+                <tr>
                     <td id="column-2-0">Julian</td>
                     <td id="column-2-1">27</td>
                 </tr>
-                <tr id="undefined3">
+                <tr>
                     <td id="column-3-0">Juan</td>
                     <td id="column-3-1">28</td>
                 </tr>
-                <tr  id="undefined4">
-                    <td  id="column-4-0">Jose</td>
-                    <td  id="column-4-1">27</td>
+                <tr>
+                    <td id="column-4-0">Jose</td>
+                    <td id="column-4-1">27</td>
                 </tr>
             </tbody>
         </table>
@@ -73,59 +86,63 @@
     <br>
     <br>
     <div>
-        <table id="tabla-segundo-hide">
-            <thead>
+        <table class="table" id="tabla-segundo-hide">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="2">WITH NODE TD AND COLUMNS HIDE</th>
+                </tr>
                 <tr>
                     <th>NOMBRE</th>
                     <th>EDAD</th>
                 </tr>
             </thead>
             <tbody id="bodyNamesTablaHide">
-                <tr id="undefined0">
+                <tr>
                     <td id="column-0-0">Johan</td>
                     <td id="column-0-1">27</td>
                 </tr>
-                <tr id="undefined1">
+                <tr>
                     <td id="column-1-0">Jeison</td>
                     <td id="column-1-1">28</td>
                 </tr>
-                <tr id="undefined2">
+                <tr>
                     <td id="column-2-0">Julian</td>
                     <td id="column-2-1">27</td>
                 </tr>
-                <tr id="undefined3">
+                <tr>
                     <td id="column-3-0">Juan</td>
                     <td id="column-3-1">28</td>
                 </tr>
-                <tr  id="undefined4">
-                    <td  id="column-4-0">Jose</td>
-                    <td  id="column-4-1">27</td>
+                <tr>
+                    <td id="column-4-0">Jose</td>
+                    <td id="column-4-1">27</td>
                 </tr>
             </tbody>
         </table>
     </div>
 </body>
 <script>
-    
-    document.addEventListener("DOMContentLoaded",()=>{
+
+    document.addEventListener("DOMContentLoaded", () => {
         const paginadorDataNoHide = new Paginador(
-            "bodyNamesDataNoHide",null,
-            5,3,data,false
+            "bodyNamesDataNoHide", null,
+            5, 3, data, false
         );
-        
+
         const paginadorDataHide = new Paginador(
-            "bodyNamesDataHide",null,
-            1,3,data,true
+            "bodyNamesDataHide", null,
+            1, 3, data, true
         );
-        
+
         const paginadorTablaNoHide = new Paginador(
-            "bodyNamesTablaNoHide",null,
-            2,3,null,false
+            "bodyNamesTablaNoHide", null,
+            2, 3, null, false
         );
         const paginadorTablaHide = new Paginador(
-            "bodyNamesTablaHide",null,
-            4,3,null,true
+            "bodyNamesTablaHide", null,
+            4, 3, null, true
         );
     });
 </script>
+
 </html>
