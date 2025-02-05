@@ -37,6 +37,7 @@ class Paginador {
                 this.mostrarPaginaTableNoHide(1);
             }
         }
+        this.camposCabecera();
     }
 
     agregarDataHide(){
@@ -132,9 +133,9 @@ class Paginador {
     }
 
     resaltarPagina(id,pagina){
-        let botones = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
-        for (let i = 0; i < botones.length; i++) {
-            botones[i]?.classList?.remove("active");
+        let paginators = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
+        for (let i = 0; i < paginators.length; i++) {
+            paginators[i]?.classList?.remove("active");
         }
         document.getElementById(id).classList.add("active");
         this.paginaActual=pagina;
@@ -219,8 +220,6 @@ class Paginador {
         }
         else{
             // Insertar la paginación justo después de la tabla
-            console.log(this.tablaBodyId.parentNode);
-           // this.tablaBodyId.parentNode.insertBefore(pagination, this.tablaBodyId.nextSibling);
             this.tablaBodyId.parentNode.insertAdjacentElement("afterend",pagination);
         }
 
@@ -277,5 +276,48 @@ class Paginador {
             alert("Error not found Data OR Table Body");
         }
 
+    }
+
+    campoBuscador(){
+        const campoBuscar = document.createElement("div");
+        campoBuscar.id= `column-buscar-${this.nameTableBodyId}`;
+        campoBuscar.className = "col-3";
+
+        const inputBuscar = document.createElement("input");
+        inputBuscar.id=`input-search-${this.nameTableBodyId}`;
+        inputBuscar.className="form-control";
+        inputBuscar.placeholder="Buscar...";
+        inputBuscar.type="text";
+
+        const labelBuscar = document.createElement("label");
+        labelBuscar.id = `label-buscar-${this.nameTableBodyId}`;
+        labelBuscar.htmlFor = `input-search-${this.nameTableBodyId}`;
+        labelBuscar.className = "form-label";
+        labelBuscar.innerHTML = "Buscar";
+
+        campoBuscar.append(labelBuscar,inputBuscar);
+
+        return campoBuscar;
+    }
+
+    camposBotones(){
+        const campoBotones = document.createElement("div");
+        campoBotones.id= `column-botones-${this.nameTableBodyId}`;
+        campoBotones.className = "col-9";
+
+        return campoBotones;
+    }
+
+    camposCabecera(){
+        const cabecera = document.createElement("div");
+        cabecera.id= `cabecera-${this.nameTableBodyId}`;
+        cabecera.className = "row";
+
+        const elementoBuscar = this.campoBuscador();
+        const elementoBotones = this.camposBotones();
+        
+        cabecera.append(elementoBuscar,elementoBotones);
+
+        this.tablaBodyId.parentNode.insertAdjacentElement("beforebegin",cabecera);
     }
 }
