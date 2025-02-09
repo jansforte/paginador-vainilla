@@ -13,6 +13,7 @@ class Paginador {
             this.totalPaginas = Math.ceil(this.data.child.length / this.filasPorPagina);
             this.paginaActual = 1;
             this.grupoActual = 1;
+            //se crea la paginación
             this.crearPaginacion();
             if(this.hide){
                 this.agregarDataHide();
@@ -29,6 +30,7 @@ class Paginador {
             this.paginaActual = 1;
             this.grupoActual = 1;
             
+            //se crea la paginación
             this.crearPaginacion();
             if(this.hide){
                 this.mostrarPaginaTableHide(1);
@@ -40,6 +42,7 @@ class Paginador {
         this.camposCabecera();
     }
 
+    //Se crea cada fila de la tabla conforme al arreglo
     agregarDataHide(){
         let html = ``;
         let informacion = this.data;
@@ -61,6 +64,7 @@ class Paginador {
         this.tablaBodyId.innerHTML = html;
     }
 
+    //Se rendereiza cada fila de la tabla segun conforme a la paginación
     agregarDataNoHide(){
         let html = ``;
         let informacion = this.data;
@@ -83,6 +87,7 @@ class Paginador {
         this.tablaBodyId.innerHTML = html;
     }
 
+    //se renderiza cada fila conforme a la paginación
     mostrarPaginaTableNoHide(pagina) {
         let informacion = this.almacenTable.get("data");
         this.paginaActual = pagina;
@@ -93,6 +98,7 @@ class Paginador {
                     });
     }
     
+    //Se muestran solo las filas de la pagina actual y las demás se ocultan
     mostrarPaginaTableHide(pagina) {
         // Ocultar todas las filas
         for (let i = 0; i < this.filas.length; i++) {
@@ -109,11 +115,13 @@ class Paginador {
         this.paginaActual = pagina;
     }
 
+    //Se renderiza la pagina seleccionada
     mostrarPaginaDataNoHide(pagina){
         this.paginaActual = pagina;
         this.agregarDataNoHide();
     }
     
+    //Se muestra la pagina que se desea y las demás se ocultan
     mostrarPaginaDataHide(pagina){
         // Ocultar todas las filas
         let idTr = this.data.idTr ?? `${this.nameTableBodyId}-tr-paginator`;
@@ -131,6 +139,7 @@ class Paginador {
         this.paginaActual = pagina;
     }
 
+    //Resalta la pagina actual
     resaltarPagina(id,pagina){
         let paginators = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
         for (let i = 0; i < paginators.length; i++) {
@@ -140,6 +149,7 @@ class Paginador {
         this.paginaActual=pagina;
     }
     
+    //Renderiza el paginador al fondo de la tabla
     crearPaginacion() {
         //Validamos si existe paginador y sus controles y eliminamos
         document.getElementById(`pagination-${this.nameTableBodyId}`)?.remove();
@@ -148,7 +158,7 @@ class Paginador {
         const pagination = document.createElement("div");
         pagination.id = `pagination-${this.nameTableBodyId}`;
         pagination.className = "pagination justify-content-center";
-        pagination.style.marginTop = "10px"; // Opcional: añadir espacio entre la tabla y la paginación
+        pagination.style.marginTop = "10px"; 
 
         let inicioPagina =  this.grupoActual; 
         if((this.grupoActual + (this.paginasPorGrupo-1))>=this.totalPaginas){
@@ -236,6 +246,7 @@ class Paginador {
         }
     }
 
+    //función para cambiar de pagina
     cambiarGrupoPaginas(direccion) {
         this.grupoActual += direccion;
         let maxGrupos = this.totalPaginas ;
@@ -261,7 +272,7 @@ class Paginador {
             this.mostrarPaginaTableHide(this.paginaActual);
         }
         else if(!this.hide && this.filas){
-            this.mostrarPaginaTableNoHide(this.paginaActual);//(this.grupoActual - 1) * this.paginasPorGrupo + 1
+            this.mostrarPaginaTableNoHide(this.paginaActual);
         }
         else if(this.hide && this.data){
             this.mostrarPaginaDataHide(this.paginaActual);
@@ -275,11 +286,14 @@ class Paginador {
 
     }
 
+    //Renderiza el campo del buscador
     campoBuscador(){
+        //Creamos el div donde se ubicará el buscador
         const campoBuscar = document.createElement("div");
         campoBuscar.id= `column-buscar-${this.nameTableBodyId}`;
         campoBuscar.className = "col-3";
 
+        //Creamos el input de buscador
         const inputBuscar = document.createElement("input");
         inputBuscar.id=`input-search-${this.nameTableBodyId}`;
         inputBuscar.className="form-control";
@@ -287,14 +301,16 @@ class Paginador {
         inputBuscar.type="text";
         inputBuscar.onkeyup = (event) => {
             if(event.target.value){
+                //Función que busca el texto en las filas
                 this.findByName(event.target.value);
             }
+            //En caso que el campo este vacio devuelve la pagina actual
             else{
                 if(this.hide && this.filas){
                     this.mostrarPaginaTableHide(this.paginaActual);
                 }
                 else if(!this.hide && this.filas){
-                    this.mostrarPaginaTableNoHide(this.paginaActual);//(this.grupoActual - 1) * this.paginasPorGrupo + 1
+                    this.mostrarPaginaTableNoHide(this.paginaActual);
                 }
                 else if(this.hide && this.data){
                     this.mostrarPaginaDataHide(this.paginaActual);
@@ -305,22 +321,25 @@ class Paginador {
                 else{
                     alert("Error not found Data OR Table Body");
                 }
+                //Cuando no se use el buscador mostramos el paginador
                 document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="";
             }
         };
         
-
+        //Creamos el label del input texto
         const labelBuscar = document.createElement("label");
         labelBuscar.id = `label-buscar-${this.nameTableBodyId}`;
         labelBuscar.htmlFor = `input-search-${this.nameTableBodyId}`;
         labelBuscar.className = "form-label";
         labelBuscar.innerHTML = "Buscar";
 
+        //agregamos el label y el input del buscador al div donde se ubicaran
         campoBuscar.append(labelBuscar,inputBuscar);
 
         return campoBuscar;
     }
 
+    //se crea el campo div para que quien desee agregue botones en función a la tabla
     camposBotones(){
         const campoBotones = document.createElement("div");
         campoBotones.id= `column-botones-${this.nameTableBodyId}`;
@@ -329,7 +348,9 @@ class Paginador {
         return campoBotones;
     }
 
+    //Se renderiza los items como buscador y botones encima de la tabla
     camposCabecera(){
+        //Creamos el div row que tendrá el buscador y el apartado de botones
         const cabecera = document.createElement("div");
         cabecera.id= `cabecera-${this.nameTableBodyId}`;
         cabecera.className = "row";
@@ -338,15 +359,19 @@ class Paginador {
         const elementoBuscar = this.campoBuscador();
         const elementoBotones = this.camposBotones();
         
+        //Agregamos los campos de buscar y botones en el div donde se ubicaran
         cabecera.append(elementoBuscar,elementoBotones);
 
+        //Renderizamos el campo sobre la tabla
         this.tablaBodyId.parentNode.insertAdjacentElement("beforebegin",cabecera);
     }
 
+    //Función para buscar texto en las filas
     findByName(phrase){
         let expresion = new RegExp(phrase,"i");
         
-        //is table with tr hides
+        //si se detecta las filas son solo de ocultarse y no renderizarse buscamos entre 
+        //el texto que contengan las filas
         if(this.hide){
             document.querySelectorAll(`#${this.nameTableBodyId} tr`).forEach(
             elemento =>{
@@ -354,6 +379,9 @@ class Paginador {
                 elemento.style.display = expresion.test(frase) ? "" : "none";
             });
         }
+        //Si se detecta que son filas que se renderiza apartir de la tabla y no del objeto Data del constructor
+        //traemos todos los elementos del Objeto Map que almacena las filas y renderizamos solo los que contienen
+        //el texto a buscar
         else if(!this.hide && this.filas){
             let informacion = this.almacenTable.get("data");
             this.tablaBodyId.innerHTML = '';
@@ -362,6 +390,8 @@ class Paginador {
                             this.tablaBodyId.append(item);
                         });
         }
+        //En caso que sea del objeto Data del constructor
+        //Filtramos segun el texto y volvemos a renderizar en la tabla
         else if(this.data){
             let html='';
             let informacion = this.data;
@@ -383,6 +413,7 @@ class Paginador {
             this.tablaBodyId.innerHTML = html;
         }
         
+        //Cuando se use el buscador siempre se ocultará el paginador
         document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="none";
     }
 
