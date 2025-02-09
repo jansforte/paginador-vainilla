@@ -1,6 +1,20 @@
-class Paginador {
-    constructor(tablaBodyId, lugarPaginador=null,filasPorPagina = 30, paginasPorGrupo = 10, data={idTr:"tr-paginator",child:[]},hide=true) {
-        this.tablaBodyId = document.getElementById(tablaBodyId);
+class PaginadorTS {
+
+    private tablaBodyId: HTMLElement;
+    private nameTableBodyId: string;
+    private filasPorPagina: number;
+    private lugarPaginador: HTMLElement | null;
+    private paginasPorGrupo: number;
+    private hide: boolean;
+    private data: { idTr: string; child: any[] };
+    private totalPaginas: number;
+    private paginaActual: number;
+    private grupoActual: number;
+    private filas?: HTMLCollectionOf<HTMLTableRowElement>;
+    private almacenTable?: Map<string, HTMLTableRowElement[]>;
+
+    constructor(tablaBodyId: string, lugarPaginador: string | null =null,filasPorPagina = 30, paginasPorGrupo = 10, data: { idTr: string; child: any[] } ={idTr:"tr-paginator",child:[]},hide=true) {
+        this.tablaBodyId = document.getElementById(tablaBodyId) as HTMLElement;
         this.nameTableBodyId = tablaBodyId;
         this.filasPorPagina = filasPorPagina;
         this.lugarPaginador = lugarPaginador ? document.getElementById(lugarPaginador) : null;
@@ -40,7 +54,7 @@ class Paginador {
         this.camposCabecera();
     }
 
-    agregarDataHide(){
+    private agregarDataHide():void{
         let html = ``;
         let informacion = this.data;
         informacion.child
@@ -61,7 +75,7 @@ class Paginador {
         this.tablaBodyId.innerHTML = html;
     }
 
-    agregarDataNoHide(){
+    private agregarDataNoHide():void{
         let html = ``;
         let informacion = this.data;
         informacion.child
@@ -83,8 +97,8 @@ class Paginador {
         this.tablaBodyId.innerHTML = html;
     }
 
-    mostrarPaginaTableNoHide(pagina) {
-        let informacion = this.almacenTable.get("data");
+    public mostrarPaginaTableNoHide(pagina:number): void {
+        let informacion = this.almacenTable?.get("data");
         this.paginaActual = pagina;
         this.tablaBodyId.innerHTML = '';
         informacion?.slice(this.paginaActual * this.filasPorPagina - this.filasPorPagina, this.paginaActual * this.filasPorPagina)
@@ -93,32 +107,36 @@ class Paginador {
                     });
     }
     
-    mostrarPaginaTableHide(pagina) {
+    public mostrarPaginaTableHide(pagina:number): void {
+        const filas = this.filas ?? [];
         // Ocultar todas las filas
-        for (let i = 0; i < this.filas.length; i++) {
-            this.filas[i].style.display = "none";
+        for (let i = 0; i < filas.length; i++) {
+            filas[i].style.display = "none";
         }
 
         // Mostrar las filas correspondientes a la página actual
         let inicio = (pagina - 1) * this.filasPorPagina;
         let fin = inicio + this.filasPorPagina;
-        for (let i = inicio; i < fin && i < this.filas.length; i++) {
-            this.filas[i].style.display = "";
+        for (let i = inicio; i < fin && i < filas.length; i++) {
+            filas[i].style.display = "";
         }
 
         this.paginaActual = pagina;
     }
 
-    mostrarPaginaDataNoHide(pagina){
+    public mostrarPaginaDataNoHide(pagina:number): void{
         this.paginaActual = pagina;
         this.agregarDataNoHide();
     }
     
-    mostrarPaginaDataHide(pagina){
+    public mostrarPaginaDataHide(pagina:number): void{
         // Ocultar todas las filas
         let idTr = this.data.idTr ?? `${this.nameTableBodyId}-tr-paginator`;
         for (let i = 0; i < this.data.child.length; i++) {
-            document.getElementById(`${idTr}${i}`).style.display = "none";
+            let elemento = document.getElementById(`${idTr}${i}`);
+            if(elemento){
+                elemento.style.display = "none";
+            }
         }
 
         // Mostrar las filas correspondientes a la página actual
@@ -126,21 +144,24 @@ class Paginador {
         let fin = inicio + this.filasPorPagina;
         
         for (let i = inicio; i < fin && i < this.data.child.length; i++) {
-            document.getElementById(`${idTr}${i}`).style.display = "";
+            let elemento = document.getElementById(`${idTr}${i}`);
+            if(elemento){
+                elemento.style.display = "";
+            }
         }
         this.paginaActual = pagina;
     }
 
-    resaltarPagina(id,pagina){
-        let paginators = document.getElementById(`pagination-${this.nameTableBodyId}`).getElementsByTagName('a');
+    private resaltarPagina(id:string,pagina:number):void{
+        let paginators = document.getElementById(`pagination-${this.nameTableBodyId}`)?.getElementsByTagName('a') ?? [];
         for (let i = 0; i < paginators.length; i++) {
             paginators[i]?.classList?.remove("active");
         }
-        document.getElementById(id).classList.add("active");
+        document.getElementById(id)?.classList.add("active");
         this.paginaActual=pagina;
     }
     
-    crearPaginacion() {
+    private crearPaginacion() {
         //Validamos si existe paginador y sus controles y eliminamos
         document.getElementById(`pagination-${this.nameTableBodyId}`)?.remove();
 
@@ -168,7 +189,7 @@ class Paginador {
 
         for (let i = inicioPagina; i <= finPagina; i++) {
             let a = document.createElement("a");
-            a.innerHTML = i;
+            a.innerHTML = ""+i;
             a.className = "page-item page-link";
             a.id = `page-item-${this.nameTableBodyId}-${i}`;
             a.href = "javascript:void(0)";
@@ -217,7 +238,10 @@ class Paginador {
         }
         else{
             // Insertar la paginación justo después de la tabla
-            this.tablaBodyId.parentNode.insertAdjacentElement("afterend",pagination);
+            const padre = this.tablaBodyId.parentNode;
+            if(padre instanceof HTMLElement){
+                padre.insertAdjacentElement("afterend",pagination);
+            }
         }
 
         if (this.paginaActual == 1) {
@@ -236,7 +260,7 @@ class Paginador {
         }
     }
 
-    cambiarGrupoPaginas(direccion) {
+    public cambiarGrupoPaginas(direccion:number): void {
         this.grupoActual += direccion;
         let maxGrupos = this.totalPaginas ;
 
@@ -275,7 +299,7 @@ class Paginador {
 
     }
 
-    campoBuscador(){
+    private campoBuscador(): HTMLElement {
         const campoBuscar = document.createElement("div");
         campoBuscar.id= `column-buscar-${this.nameTableBodyId}`;
         campoBuscar.className = "col-3";
@@ -286,7 +310,7 @@ class Paginador {
         inputBuscar.placeholder="Buscar...";
         inputBuscar.type="text";
         inputBuscar.onkeyup = (event) => {
-            if(event.target.value){
+            if(event.target instanceof HTMLInputElement){
                 this.findByName(event.target.value);
             }
             else{
@@ -305,7 +329,10 @@ class Paginador {
                 else{
                     alert("Error not found Data OR Table Body");
                 }
-                document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="";
+                const paginador = document.getElementById(`pagination-${this.nameTableBodyId}`);
+                if(paginador){
+                    paginador.style.display="";
+                }
             }
         };
         
@@ -321,7 +348,7 @@ class Paginador {
         return campoBuscar;
     }
 
-    camposBotones(){
+    private camposBotones(): HTMLElement{
         const campoBotones = document.createElement("div");
         campoBotones.id= `column-botones-${this.nameTableBodyId}`;
         campoBotones.className = "btn-group col-9 align-self-end";
@@ -329,7 +356,7 @@ class Paginador {
         return campoBotones;
     }
 
-    camposCabecera(){
+    private camposCabecera(): void{
         const cabecera = document.createElement("div");
         cabecera.id= `cabecera-${this.nameTableBodyId}`;
         cabecera.className = "row";
@@ -340,24 +367,29 @@ class Paginador {
         
         cabecera.append(elementoBuscar,elementoBotones);
 
-        this.tablaBodyId.parentNode.insertAdjacentElement("beforebegin",cabecera);
+        const padre = this.tablaBodyId.parentNode;
+        if(padre instanceof HTMLElement){
+            padre.insertAdjacentElement("beforebegin",cabecera);
+        }
     }
 
-    findByName(phrase){
+    private findByName(phrase:string): void{
         let expresion = new RegExp(phrase,"i");
         
         //is table with tr hides
         if(this.hide){
             document.querySelectorAll(`#${this.nameTableBodyId} tr`).forEach(
             elemento =>{
-                let frase =elemento.textContent.toLowerCase();
-                elemento.style.display = expresion.test(frase) ? "" : "none";
+                let frase =(elemento.textContent ?? "").toLowerCase();
+                if(elemento instanceof HTMLElement){
+                    elemento.style.display = expresion.test(frase) ? "" : "none";
+                }
             });
         }
         else if(!this.hide && this.filas){
-            let informacion = this.almacenTable.get("data");
+            let informacion = this.almacenTable?.get("data");
             this.tablaBodyId.innerHTML = '';
-            informacion?.filter(item => expresion.test(item.textContent.toLowerCase()))
+            informacion?.filter(item => expresion.test((item.textContent ?? "").toLowerCase()))
                         .map((item) => {
                             this.tablaBodyId.append(item);
                         });
@@ -383,7 +415,10 @@ class Paginador {
             this.tablaBodyId.innerHTML = html;
         }
         
-        document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="none";
+        const paginador = document.getElementById(`pagination-${this.nameTableBodyId}`);
+        if(paginador){
+            paginador.style.display="none";
+        }
     }
 
 }
