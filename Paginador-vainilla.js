@@ -326,7 +326,7 @@ class Paginador {
     camposBotones(){
         const campoBotones = document.createElement("div");
         campoBotones.id= `column-botones-${this.nameTableBodyId}`;
-        campoBotones.className = "col-9";
+        campoBotones.className = "btn-group col-9 align-self-end";
 
         return campoBotones;
     }
@@ -335,6 +335,7 @@ class Paginador {
         const cabecera = document.createElement("div");
         cabecera.id= `cabecera-${this.nameTableBodyId}`;
         cabecera.className = "row";
+        cabecera.style.marginBottom = "5px";
 
         const elementoBuscar = this.campoBuscador();
         const elementoBotones = this.camposBotones();
@@ -386,4 +387,5 @@ class Paginador {
         
         document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="none";
     }
+
 }
