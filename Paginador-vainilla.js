@@ -86,7 +86,6 @@ class Paginador {
     mostrarPaginaTableNoHide(pagina) {
         let informacion = this.almacenTable.get("data");
         this.paginaActual = pagina;
-        
         this.tablaBodyId.innerHTML = '';
         informacion?.slice(this.paginaActual * this.filasPorPagina - this.filasPorPagina, this.paginaActual * this.filasPorPagina)
                     .map((item) => {
@@ -288,6 +287,30 @@ class Paginador {
         inputBuscar.className="form-control";
         inputBuscar.placeholder="Buscar...";
         inputBuscar.type="text";
+        inputBuscar.onkeyup = (event) => {
+            if(event.target.value){
+                this.findByName(event.target.value);
+            }
+            else{
+                if(this.hide && this.filas){
+                    this.mostrarPaginaTableHide(this.paginaActual);
+                }
+                else if(!this.hide && this.filas){
+                    this.mostrarPaginaTableNoHide(this.paginaActual);//(this.grupoActual - 1) * this.paginasPorGrupo + 1
+                }
+                else if(this.hide && this.data){
+                    this.mostrarPaginaDataHide(this.paginaActual);
+                }
+                else if(!this.hide && this.data){
+                    this.mostrarPaginaDataNoHide(this.paginaActual);
+                }
+                else{
+                    alert("Error not found Data OR Table Body");
+                }
+                document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="";
+            }
+        };
+        
 
         const labelBuscar = document.createElement("label");
         labelBuscar.id = `label-buscar-${this.nameTableBodyId}`;
@@ -319,5 +342,48 @@ class Paginador {
         cabecera.append(elementoBuscar,elementoBotones);
 
         this.tablaBodyId.parentNode.insertAdjacentElement("beforebegin",cabecera);
+    }
+
+    findByName(phrase){
+        let expresion = new RegExp(phrase,"i");
+        
+        //is table with tr hides
+        if(this.hide){
+            document.querySelectorAll(`#${this.nameTableBodyId} tr`).forEach(
+            elemento =>{
+                let frase =elemento.textContent.toLowerCase();
+                elemento.style.display = expresion.test(frase) ? "" : "none";
+            });
+        }
+        else if(!this.hide && this.filas){
+            let informacion = this.almacenTable.get("data");
+            this.tablaBodyId.innerHTML = '';
+            informacion?.filter(item => expresion.test(item.textContent.toLowerCase()))
+                        .map((item) => {
+                            this.tablaBodyId.append(item);
+                        });
+        }
+        else if(this.data){
+            let html='';
+            let informacion = this.data;
+            informacion.child
+            .filter((item)=>item.column?.some(col => expresion.test(col.value.toLowerCase())))
+            .map((item, indexParent) => {
+                let styleParent = item.style ?? '';
+                let claseParent = item.clase ?? '';
+                let idTr = informacion.idTr ?? `${this.nameTableBodyId}-tr-paginator`;
+                html+=`<tr class="${claseParent}" style="${styleParent}" id="${idTr}${indexParent}">`;
+                item.column?.map((columna,index)=>{
+                    let columnaId = columna.id ?? `${this.nameTableBodyId}-column-${indexParent}-${index}`;
+                    let claseHijo = columna.claseHijo ?? '';
+                    let styleHijo = columna.styleHijo ?? '';
+                    html+=`<td class="${claseHijo}" style="${styleHijo}" id="${columnaId}">${columna.value}</td>`;
+                });
+                html+=`</tr>`;
+            });
+            this.tablaBodyId.innerHTML = html;
+        }
+        
+        document.getElementById(`pagination-${this.nameTableBodyId}`).style.display="none";
     }
 }
